@@ -188,3 +188,13 @@ def test_container_reads_the_value_from_the_secret() -> None:
         )
     ]
     assert _SECRET_VALUE not in pod.spec.containers[0].args[0]
+
+
+@pytest.mark.usefixtures("secrets_api")
+def test_placeholder_names_the_environment_variable_the_pod_defines() -> None:
+    pod = _launch(launcher=_make_launcher())
+
+    container = pod.spec.containers[0]
+    assert [env.name for env in container.env] == ["__TANGLE_SECRET_TOKEN"]
+    assert container.args == ["$(__TANGLE_SECRET_TOKEN)"]
+    assert _SECRET_VALUE not in container.args[0]
