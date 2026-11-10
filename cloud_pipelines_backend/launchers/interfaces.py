@@ -165,3 +165,16 @@ class LaunchedContainer(abc.ABC):
 #     exit_code: int
 #     # TODO: Replace with logs_artifact
 #     ### log: "ProcessLog"
+
+
+@dataclasses.dataclass(kw_only=True)
+class ContainerExecutionSuggestion:
+    container_execution_id: str
+    mark_as_handled: typing.Callable[[], None] | None
+
+
+@typing.runtime_checkable
+class ContainerExecutionRefreshSuggester(typing.Protocol):
+    def suggest_next_container_execution_to_refresh(
+        self,
+    ) -> ContainerExecutionSuggestion: ...
